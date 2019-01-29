@@ -19,7 +19,7 @@ fi
 tmp_dir=/tmp/${USER}_pin_align_$$
 mkdir $tmp_dir
 convert $1 -contrast  -contrast ${tmp_dir}/$1
-convert ${tmp_dir}/$1 -crop 275x400+375+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
+convert ${tmp_dir}/$1 -crop 325x400+375+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
 if [ "${3}xx" != "xx" ]; then
   convert ${tmp_dir}/$1 -crop 100x400+650+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $3
   if [ "${4}xx" != "xx" ]; then
