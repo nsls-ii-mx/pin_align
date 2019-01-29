@@ -15,16 +15,23 @@ export PIN_ALIGN_ROOT=`dirname "$full_path" | sed 's/\/bin$//'`
 #echo 4 $4 
 #echo 5 $5 
 
-if [ "${1}xx" == "--help" ]; then
+if [ "${1}xx" == "--helpxx" ]; then
    echo "pin_align.sh image_0 image_90 image_out image_base_out image_sub_base_out [tilt_limit]" 
    echo "        compare 0 and 90 degree images"
-   echo "        writing the resulting image to image_out"
-   echo "        assuming a 1280x1024 images imgagemagick convert"
+   echo "        writing the resulting pin tip image to image_out"
+   echo "        writing the resulting pin base image to image_base_out"
+   echo "        writing the resulting pin base cap image to image_sub_base_out"
+   echo "        assuming  1280x1024 images"
+   echo "        imagemagick convert called as convert"
+   echo "        imagemagick compare called as conpare"
    echo "        assuming a center at 515 460"
-   echo "        assuming 375x400+375+312 ROI"
+   echo "        assuming 325x400+375+312 ROI"
    echo "        and $PIN_ALIGN_ROOT containing pin_align_prep.sh, etc"
    echo "        tilt_limit is a limit on the image height in pixels"
    echo "        default 50 "
+   echo " "
+   echo "        export PIN_ALIGN_Y_UP=1; if Y motor axis is up"
+   echo " "
    exit
 fi
 
@@ -43,6 +50,8 @@ if [ "${6}xx" == "xx" ]; then
 else
   tilt_limit=$6
 fi
+base_tilt_limit=$(( $tilt_limit * 4  ))
+base_tilt_limit=$(( $base_tilt_limit / 3  ))
 tmp_dir=/tmp/${USER}_pin_align_$$ 
 mkdir $tmp_dir
 echo Processing pin images
@@ -60,6 +69,7 @@ echo "Files in: " $tmp_dir
 #                             i.e. opposite to image_width
 #                             motor-y vertical increasing top to bottom
 #                             i.e. with image_height 
+#                             unless environment variable PIN_ALIGN_Y_UP is not empty
 
 XZ=$1
 XY=$2
@@ -129,7 +139,12 @@ image_pin_y=$(( $info_raw_image_height_offset + $image_half_height_y ))
 image_pin_y_orig=$(( $image_pin_y + $roi_height_offset ))
 image_pin_y_offset_to_cent=$(( $image_center_height - $image_pin_y  ))
 image_pin_y_offset_to_cent=$(( $image_pin_y_offset_to_cent * 5 ))
-image_pin_y_offset_to_cent=`echo "scale=2; $image_pin_y_offset_to_cent / 100"|bc -l`
+if [ "xx${PIN_ALIGN_Y_UP}" != "xx" ]; then  
+    image_pin_y_offset_to_cent=`echo "scale=2; $image_pin_y_offset_to_cent / 100"|bc -l`
+else
+    image_pin_y_offset_to_cent=`echo "scale=2; - $image_pin_y_offset_to_cent / 100"|bc -l`
+fi
+
 convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.jpg
 convert ${tmp_dir}/${fbase}_2_left.jpg -trim info:- > ${tmp_dir}/${fbase}_2_left.jpg.info
 
@@ -143,8 +158,11 @@ image_pin_y2=$(( $info_raw_image_height_offset + $image_half_height_y2 ))
 image_pin_y2_orig=$(( $image_pin_y2 + $roi_height_offset ))
 image_pin_y2_offset_to_cent=$(( $image_center_height - $image_pin_y2  ))
 image_pin_y2_offset_to_cent=$(( $image_pin_y2_offset_to_cent * 5 ))
-image_pin_y2_offset_to_cent=`echo "scale=2; $image_pin_y2_offset_to_cent / 100"|bc -l`
-  
+if [ "xx${PIN_ALIGN_Y_UP}" != "xx" ]; then  
+    image_pin_y2_offset_to_cent=`echo "scale=2; $image_pin_y2_offset_to_cent / 100"|bc -l`
+else
+    image_pin_y2_offset_to_cent=`echo "scale=2; - $image_pin_y2_offset_to_cent / 100"|bc -l`
+fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2 > ${tmp_dir}/info_image_compare_1_2.vars
 . ${tmp_dir}/info_image_compare_1_2.vars
@@ -155,7 +173,7 @@ image_pin_x_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offse
 image_pin_x_offset_to_cent=$(( $image_pin_x_offset_to_cent * 5 ))
 image_pin_x_offset_to_cent=`echo "scale=2; $image_pin_x_offset_to_cent / 100"| bc -l`
 
-
+nooutput=0
  
 if [ "$info_raw_image_width_offset" == -1 ]; then
    echo "NO PIN FOUND"
@@ -166,33 +184,62 @@ if [ "$info_raw_image_height_offset" == -1 ]; then
    exit
 fi
 
-#echo tip "$info_active_image_height > $tilt_limit"
-
 if (( $(echo "$info_active_image_height > $tilt_limit" | bc -l) )); then
    echo "TILTED; CANNOT CENTER"
+   echo "info_active_image_height:${info_active_image_height} > tilt_limit:${tilt_limit}"
+   nooutput=1
+   exit
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2_base > ${tmp_dir}/info_image_compare_1_2_base.vars
 . ${tmp_dir}/info_image_compare_1_2_base.vars
 
-#echo base "$info_active_image_height > $tilt_limit"
+pin_center=$(( $info_active_image_height / 2 ))
+pin_center=$(( $info_raw_image_height_offset + $pin_center ))
+pin_center=$((  $roi_height_offset + $pin_center ))
 
-if (( $(echo "$info_active_image_height > $tilt_limit" | bc -l) )); then
+if (( $(echo "$info_active_image_height > $base_tilt_limit" | bc -l) )); then
    echo "BASE TILTED; CANNOT CENTER"
+   echo "info_active_image_height:${info_active_image_height} .gt. base_tilt_limit:${base_tilt_limit}"
+   nooutput=1
 fi
 
-#echo "X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x1_orig}, ${image_pin_y_orig}, - ] 
-#echo "X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x2_orig}, - , ${image_pin_z_orig} ]
-#echo "X,Y,Z PIN POS BOTH   PX"   [${image_pin_x_orig}, ${image_pin_y_orig}, ${image_pin_z_orig} ] 
-echo "X,Y,Z PIN POS BOTH   PX"   [${image_pin_x_orig}, ${image_pin_y2_orig}, ${image_pin_z2_orig} ] 
+$PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2_sub_base > ${tmp_dir}/info_image_compare_1_2_sub_base.vars
+. ${tmp_dir}/info_image_compare_1_2_sub_base.vars
+
+sub_base_center=$(( $info_active_image_height / 2 ))
+sub_base_center=$(( $info_raw_imaage_height_offset + $sub_base_center ))
+sub_base_center=$((  $roi_height_offset + $sub_base_center ))
+
+if (( $(echo "$pin_center > $sub_base_center" | bc -l) )); then
+   if (( $(echo "$pin_center - $sub_base_center > $base_tilt_limit" | bc -l) )); then
+       echo "BASE TILTED; CANNOT CENTER"
+       echo "pin_center:${pin_center} - sub_base_center:${sub_base_center}: .gt. base_tilt_limit:${base_tilt_limit}"
+       nooutput=1
+   fi
+else
+   if (( $(echo "$sub_base_center - $pin_center  > $base_tilt_limit" | bc -l) )); then
+       echo "BASE TILTED; CANNOT CENTER"
+       echo "sub_base_center:${sub_base_center} - pin_center:${pin_center}: .gt. base_tilt_limit:${base_tilt_limit}"
+       nooutput=1
+   fi
+fi
 
 
-#echo "X,Y,- OFFSETS TO CENTER IMAGE1 mm"  [${image_pin_x1_offset_to_cent}, ${image_pin_y_offset_to_cent}, - ] 
-#echo "X,-,Z OFFSETS TO CENTER IMAGE2 mm"  [${image_pin_x2_offset_to_cent}, - , ${image_pin_z_offset_to_cent} ]
-#echo "X,Y,Z OFFSETS TO CENTER BOTH   mm"    [${image_pin_x_offset_to_cent}, ${image_pin_y_offset_to_cent}, ${image_pin_z_offset_to_cent} ] 
-echo "X,Y,Z OFFSETS TO CENTER BOTH   mm"    [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ] 
+if [ "xx${nooutput}" == "xx0" ]; then
+    #echo "X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x1_orig}, ${image_pin_y_orig}, - ] 
+    #echo "X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x2_orig}, - , ${image_pin_z_orig} ]
+    #echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y_orig}, ${image_pin_z_orig} ] 
+    echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y2_orig}, ${image_pin_z2_orig} ] 
+
+
+    #echo "X,Y,- OFFSETS TO CENTER IMAGE1 mm"  [${image_pin_x1_offset_to_cent}, ${image_pin_y_offset_to_cent}, - ] 
+    #echo "X,-,Z OFFSETS TO CENTER IMAGE2 mm"  [${image_pin_x2_offset_to_cent}, - , ${image_pin_z_offset_to_cent} ]
+    #echo "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y_offset_to_cent}, ${image_pin_z_offset_to_cent} ] 
+    echo  "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ] 
 
 
 #cat ${tmp_dir}/info*
 
+fi
 
