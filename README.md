@@ -91,6 +91,7 @@ pin_align.sh image_0 image_90 image_out image_base_out image_sub_base_out [tilt_
         default 50 
  
         export PIN_ALIGN_Y_UP=1; if Y motor axis is up
+        export PIN_ALIGN_Z_UP=1; if Z motor axis is up
 
 pin_align_prep.sh image_in image_out [base_image_out [sub_base_image_out]]
         prepare a pin alignment image, image_in, for

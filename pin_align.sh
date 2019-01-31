@@ -31,6 +31,7 @@ if [ "${1}xx" == "--helpxx" ]; then
    echo "        default 50 "
    echo " "
    echo "        export PIN_ALIGN_Y_UP=1; if Y motor axis is up"
+   echo "        export PIN_ALIGN_Z_UP=1; if Z motor axis is up"
    echo " "
    exit
 fi
@@ -106,7 +107,11 @@ image_pin_z=$(( $info_raw_image_height_offset + $image_half_height_z ))
 image_pin_z_orig=$(( $image_pin_z + $roi_height_offset ))
 image_pin_z_offset_to_cent=$(( $image_center_height - $image_pin_z  ))
 image_pin_z_offset_to_cent=$(( $image_pin_z_offset_to_cent * 5 ))
-image_pin_z_offset_to_cent=`echo "scale=2; $image_pin_z_offset_to_cent / 100"|bc -l`
+if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
+    image_pin_z_offset_to_cent=`echo "scale=2; $image_pin_z_offset_to_cent / 100"|bc -l`
+else
+    image_pin_z_offset_to_cent=`echo "scale=2; - $image_pin_z_offset_to_cent / 100"|bc -l`
+fi
 convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.jpg
 convert ${tmp_dir}/${fbase}_1_left.jpg -trim info:- > ${tmp_dir}/${fbase}_1_left.jpg.info  
 
@@ -120,9 +125,11 @@ image_pin_z2=$(( $info_raw_image_height_offset + $image_half_height_z2 ))
 image_pin_z2_orig=$(( $image_pin_z2 + $roi_height_offset ))
 image_pin_z2_offset_to_cent=$(( $image_center_height - $image_pin_z2  ))
 image_pin_z2_offset_to_cent=$(( $image_pin_z2_offset_to_cent * 5 ))
-image_pin_z2_offset_to_cent=`echo "scale=2; $image_pin_z2_offset_to_cent / 100"|bc -l`
-
-
+if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
+    image_pin_z2_offset_to_cent=`echo "scale=2; $image_pin_z2_offset_to_cent / 100"|bc -l`
+else
+    image_pin_z2_offset_to_cent=`echo "scale=2; -  $image_pin_z2_offset_to_cent / 100"|bc -l`
+fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_2 > ${tmp_dir}/info_image_2.vars
 . ${tmp_dir}/info_image_2.vars
@@ -227,14 +234,14 @@ fi
 
 
 if [ "xx${nooutput}" == "xx0" ]; then
-    #echo "X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x1_orig}, ${image_pin_y_orig}, - ] 
-    #echo "X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x2_orig}, - , ${image_pin_z_orig} ]
+    echo "X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x1_orig}, ${image_pin_y2_orig}, - ] 
+    echo "X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x2_orig}, - , ${image_pin_z2_orig} ]
     #echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y_orig}, ${image_pin_z_orig} ] 
     echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y2_orig}, ${image_pin_z2_orig} ] 
 
 
-    #echo "X,Y,- OFFSETS TO CENTER IMAGE1 mm"  [${image_pin_x1_offset_to_cent}, ${image_pin_y_offset_to_cent}, - ] 
-    #echo "X,-,Z OFFSETS TO CENTER IMAGE2 mm"  [${image_pin_x2_offset_to_cent}, - , ${image_pin_z_offset_to_cent} ]
+    echo "X,Y,- OFFSETS TO CENTER IMAGE1 mm"   [${image_pin_x1_offset_to_cent}, ${image_pin_y2_offset_to_cent}, - ] 
+    echo "X,-,Z OFFSETS TO CENTER IMAGE2 mm"   [${image_pin_x2_offset_to_cent}, - , ${image_pin_z2_offset_to_cent} ]
     #echo "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y_offset_to_cent}, ${image_pin_z_offset_to_cent} ] 
     echo  "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ] 
 

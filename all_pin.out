@@ -1,72 +1,100 @@
 Processing pin images
 0 degree:  mitegenPins_omega_0_centered_001.jpg
 90 degrees;  mitegenPins_omega_90_centered_001.jpg
-Files in:  /tmp/yaya_pin_align_1189
+Files in:  /tmp/yaya_pin_align_28098
+X,Y,- PIN POS IMAGE1 PX [503, 464, - ]
+X,-,Z PIN POS IMAGE2 PX [503, - , 464 ]
 X,Y,Z PIN POS PX [503, 464, 464 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [.60, .20, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [.60, - , -.20 ]
 X,Y,Z OFFSETS TO CENTER  mm [.60, .20, -.20 ]
 Processing pin images
 0 degree:  omega_0_001.jpg
 90 degrees;  omega_90_001.jpg
-Files in:  /tmp/yaya_pin_align_1270
+Files in:  /tmp/yaya_pin_align_28179
 TILTED; CANNOT CENTER
 info_active_image_height:64 > tilt_limit:50
 Processing pin images
 0 degree:  omega_0_002.jpg
 90 degrees;  omega_90_002.jpg
-Files in:  /tmp/yaya_pin_align_1344
+Files in:  /tmp/yaya_pin_align_28250
+X,Y,- PIN POS IMAGE1 PX [503, 464, - ]
+X,-,Z PIN POS IMAGE2 PX [503, - , 460 ]
 X,Y,Z PIN POS PX [503, 464, 460 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [.60, .20, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [.60, - , 0 ]
 X,Y,Z OFFSETS TO CENTER  mm [.60, .20, 0 ]
 Processing pin images
 0 degree:  omega_0_003.jpg
 90 degrees;  omega_90_003.jpg
-Files in:  /tmp/yaya_pin_align_1432
+Files in:  /tmp/yaya_pin_align_28357
 TILTED; CANNOT CENTER
 info_active_image_height:352 > tilt_limit:50
 Processing pin images
 0 degree:  omega_0_004.jpg
 90 degrees;  omega_90_004.jpg
-Files in:  /tmp/yaya_pin_align_1501
+Files in:  /tmp/yaya_pin_align_28424
 TILTED; CANNOT CENTER
 info_active_image_height:368 > tilt_limit:50
 Processing pin images
 0 degree:  omega_0_005.jpg
 90 degrees;  omega_90_005.jpg
-Files in:  /tmp/yaya_pin_align_1571
+Files in:  /tmp/yaya_pin_align_28496
+X,Y,- PIN POS IMAGE1 PX [495, 440, - ]
+X,-,Z PIN POS IMAGE2 PX [479, - , 440 ]
 X,Y,Z PIN POS PX [471, 440, 440 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [1.00, -1.00, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [1.80, - , 1.00 ]
 X,Y,Z OFFSETS TO CENTER  mm [2.20, -1.00, 1.00 ]
 Processing pin images
 0 degree:  omega_0_006.jpg
 90 degrees;  omega_90_006.jpg
-Files in:  /tmp/yaya_pin_align_1652
+Files in:  /tmp/yaya_pin_align_28578
 TILTED; CANNOT CENTER
 info_active_image_height:80 > tilt_limit:50
 Processing pin images
 0 degree:  omega_0_007.jpg
 90 degrees;  omega_90_007.jpg
-Files in:  /tmp/yaya_pin_align_1721
+Files in:  /tmp/yaya_pin_align_28646
+X,Y,- PIN POS IMAGE1 PX [503, 460, - ]
+X,-,Z PIN POS IMAGE2 PX [503, - , 468 ]
 X,Y,Z PIN POS PX [503, 460, 468 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [.60, 0, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [.60, - , -.40 ]
 X,Y,Z OFFSETS TO CENTER  mm [.60, 0, -.40 ]
 Processing pin images
 0 degree:  omega_0_008.jpg
 90 degrees;  omega_90_008.jpg
-Files in:  /tmp/yaya_pin_align_1802
+Files in:  /tmp/yaya_pin_align_28727
 TILTED; CANNOT CENTER
 info_active_image_height:112 > tilt_limit:50
 Processing pin images
 0 degree:  omega_0_009.jpg
 90 degrees;  omega_90_009.jpg
-Files in:  /tmp/yaya_pin_align_1872
+Files in:  /tmp/yaya_pin_align_28795
+X,Y,- PIN POS IMAGE1 PX [615, 444, - ]
+X,-,Z PIN POS IMAGE2 PX [607, - , 480 ]
 X,Y,Z PIN POS PX [599, 444, 480 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [-5.00, -.80, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [-4.60, - , -1.00 ]
 X,Y,Z OFFSETS TO CENTER  mm [-4.20, -.80, -1.00 ]
 Processing pin images
 0 degree:  omega_0_010.jpg
 90 degrees;  omega_90_010.jpg
-Files in:  /tmp/yaya_pin_align_1986
+Files in:  /tmp/yaya_pin_align_28875
+X,Y,- PIN POS IMAGE1 PX [511, 460, - ]
+X,-,Z PIN POS IMAGE2 PX [511, - , 468 ]
 X,Y,Z PIN POS PX [503, 460, 468 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [.20, 0, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [.20, - , -.40 ]
 X,Y,Z OFFSETS TO CENTER  mm [.60, 0, -.40 ]
 Processing pin images
 0 degree:  omega_0_011.jpg
 90 degrees;  omega_90_011.jpg
-Files in:  /tmp/yaya_pin_align_2068
+Files in:  /tmp/yaya_pin_align_28956
+X,Y,- PIN POS IMAGE1 PX [527, 464, - ]
+X,-,Z PIN POS IMAGE2 PX [519, - , 480 ]
 X,Y,Z PIN POS PX [519, 464, 480 ]
+X,Y,- OFFSETS TO CENTER IMAGE1 mm [-.60, .20, - ]
+X,-,Z OFFSETS TO CENTER IMAGE2 mm [-.20, - , -1.00 ]
 X,Y,Z OFFSETS TO CENTER  mm [-.20, .20, -1.00 ]
