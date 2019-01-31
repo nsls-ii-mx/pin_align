@@ -42,7 +42,7 @@ fbase=${fname%%.*}
  
 roi_width=$(( 325 ))
 roi_height=$(( 400 ))
-roi_width_offset=$(( 375 ))
+roi_width_offset=$(( 375 + 10))
 roi_height_offset=$(( 312 ))
 image_center_width=$(( 515 - $roi_width_offset ))
 image_center_height=$(( 460 - $roi_height_offset ))
@@ -101,7 +101,7 @@ image_pin_x1_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_pin_x1_offset_to_cent * 5 ))
 image_pin_x1_offset_to_cent=`echo "scale=2; $image_pin_x1_offset_to_cent / 100"| bc -l`
-x1_clip=$(( ${info_raw_image_width_offset} + 375 ))
+x1_clip=$(( ${info_raw_image_width_offset} + 375 + 10 ))
 #echo ${x1_clip}
 image_pin_z=$(( $info_raw_image_height_offset + $image_half_height_z ))
 image_pin_z_orig=$(( $image_pin_z + $roi_height_offset ))
@@ -140,7 +140,7 @@ image_pin_x2_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_pin_x2_offset_to_cent * 5 ))
 image_pin_x2_offset_to_cent=`echo "scale=2; $image_pin_x2_offset_to_cent / 100"| bc -l`
-x2_clip=$(( ${info_raw_image_width_offset} + 375 ))
+x2_clip=$(( ${info_raw_image_width_offset} + 375 + 10 ))
 #echo $x2_clip
 image_pin_y=$(( $info_raw_image_height_offset + $image_half_height_y ))
 image_pin_y_orig=$(( $image_pin_y + $roi_height_offset ))
