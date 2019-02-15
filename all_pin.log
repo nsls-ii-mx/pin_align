@@ -1,0 +1,109 @@
+PIN_ALIGN_ROOT="/Users/yaya/pin_align_14Feb19/pin_align"
+Processing pin images
+0 degree:  mitegenPins_omega_0_centered_001.jpg
+90 degrees;  mitegenPins_omega_90_centered_001.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55617
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [508, - , 464 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [509, 464, - ]
+OVERALL  X,Y,Z PIN POS        PX [508, 464, 464 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [-.35, - , .20 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [-.30, .20, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [-.35, .20, .20 ]
+Processing pin images
+0 degree:  omega_0_001.jpg
+90 degrees;  omega_90_001.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55696
+/Users/yaya/pin_align_14Feb19/pin_align
+BASE TILTED; CANNOT CENTER
+pin_center:489 - sub_base_center:462: .gt. sub_base_tilt_limit:16
+Processing pin images
+0 degree:  omega_0_002.jpg
+90 degrees;  omega_90_002.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55771
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [510, - , 462 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [509, 461, - ]
+OVERALL  X,Y,Z PIN POS        PX [509, 461, 462 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [-.25, - , .10 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [-.30, .05, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [-.30, .05, .10 ]
+Processing pin images
+0 degree:  omega_0_003.jpg
+90 degrees;  omega_90_003.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55849
+/Users/yaya/pin_align_14Feb19/pin_align
+PIN TILTED; CANNOT CENTER
+info_active_image_height:337 > tilt_limit:50
+Processing pin images
+0 degree:  omega_0_004.jpg
+90 degrees;  omega_90_004.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55911
+/Users/yaya/pin_align_14Feb19/pin_align
+PIN TILTED; CANNOT CENTER
+info_active_image_height:353 > tilt_limit:50
+Processing pin images
+0 degree:  omega_0_005.jpg
+90 degrees;  omega_90_005.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_55973
+/Users/yaya/pin_align_14Feb19/pin_align
+BASE TILTED; CANNOT CENTER
+sub_base_center:469 - pin_center:450: .gt. sub_base_tilt_limit:16
+Processing pin images
+0 degree:  omega_0_006.jpg
+90 degrees;  omega_90_006.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56049
+/Users/yaya/pin_align_14Feb19/pin_align
+PIN TILTED; CANNOT CENTER
+info_active_image_height:72 > tilt_limit:50
+Processing pin images
+0 degree:  omega_0_007.jpg
+90 degrees;  omega_90_007.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56111
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [510, - , 468 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [510, 460, - ]
+OVERALL  X,Y,Z PIN POS        PX [510, 460, 468 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [-.25, - , .40 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [-.25, 0, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [-.25, 0, .40 ]
+Processing pin images
+0 degree:  omega_0_008.jpg
+90 degrees;  omega_90_008.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56189
+/Users/yaya/pin_align_14Feb19/pin_align
+PIN TILTED; CANNOT CENTER
+info_active_image_height:92 > tilt_limit:50
+Processing pin images
+0 degree:  omega_0_009.jpg
+90 degrees;  omega_90_009.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56251
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [616, - , 480 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [612, 442, - ]
+OVERALL  X,Y,Z PIN POS        PX [612, 442, 480 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [5.05, - , 1.00 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [4.85, -.90, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [4.85, -.90, 1.00 ]
+Processing pin images
+0 degree:  omega_0_010.jpg
+90 degrees;  omega_90_010.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56329
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [513, - , 466 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [512, 458, - ]
+OVERALL  X,Y,Z PIN POS        PX [512, 458, 466 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [-.10, - , .30 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [-.15, -.10, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [-.15, -.10, .30 ]
+Processing pin images
+0 degree:  omega_0_011.jpg
+90 degrees;  omega_90_011.jpg
+Files in:  /Users/yaya/pin_align_14Feb19/pin_align/yaya_pin_align_56408
+/Users/yaya/pin_align_14Feb19/pin_align
+OMEGA 0  X,-,Z PIN POS IMAGE2 PX [529, - , 476 ]
+OMEGA 90 X,Y,- PIN POS IMAGE1 PX [519, 462, - ]
+OVERALL  X,Y,Z PIN POS        PX [519, 462, 476 ]
+OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm [.70, - , .80 ]
+OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm [.20, .10, - ]
+OVERALL X,Y,Z OFFSETS TO CENTER         mm [.20, .10, .80 ]

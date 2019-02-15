@@ -1,11 +1,13 @@
-#!/bin/bash #-xv
+#!/bin/bash
 #
 #  pin_align.sh -- ccmparison 0 and 90 degree images
 #                       H. J. Bernstein, 3 Jan 2019
 #
 full_path="$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"
 #echo full_path=\"$full_path\"
-export PIN_ALIGN_ROOT=`dirname "$full_path" | sed 's/\/bin$//'`
+if [ -d /usr/local/bin/topViewCam ]; then
+   export PIN_ALIGN_ROOT=/usr/local/bin/topViewCam
+fi
 #echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
 
 #echo 0 $0 
@@ -36,13 +38,14 @@ if [ "${1}xx" == "--helpxx" ]; then
    exit
 fi
 
+fuzz="9% -threshold 50%"
 fname=$1
 fname=${fname##*/}
 fbase=${fname%%.*} 
  
 roi_width=$(( 325 ))
 roi_height=$(( 400 ))
-roi_width_offset=$(( 375 + 10))
+roi_width_offset=$(( 375 ))
 roi_height_offset=$(( 312 ))
 image_center_width=$(( 515 - $roi_width_offset ))
 image_center_height=$(( 460 - $roi_height_offset ))
@@ -53,7 +56,8 @@ else
 fi
 base_tilt_limit=$(( $tilt_limit * 4  ))
 base_tilt_limit=$(( $base_tilt_limit / 3  ))
-tmp_dir=/tmp/${USER}_pin_align_$$ 
+sub_base_tilt_limit=$(( $tilt_limit / 3 ))
+tmp_dir=$PWD/${USER}_pin_align_$$ 
 mkdir $tmp_dir
 echo Processing pin images
 echo "0 degree: " $1
@@ -75,22 +79,30 @@ echo "Files in: " $tmp_dir
 XZ=$1
 XY=$2
 
-$PIN_ALIGN_ROOT/pin_align_prep.sh $XZ ${tmp_dir}/${fbase}_1.jpg \
-${tmp_dir}/${fbase}_1_base.jpg ${tmp_dir}/${fbase}_1_sub_base.jpg> ${tmp_dir}/${fbase}_1.mvg 
-$PIN_ALIGN_ROOT/pin_align_prep.sh $XY ${tmp_dir}/${fbase}_2.jpg \
-${tmp_dir}/${fbase}_2_base.jpg ${tmp_dir}/${fbase}_2_sub_base.jpg> ${tmp_dir}/${fbase}_2.mvg 
-compare ${tmp_dir}/${fbase}_1.jpg ${tmp_dir}/${fbase}_2.jpg $3 
-compare ${tmp_dir}/${fbase}_1_base.jpg ${tmp_dir}/${fbase}_2_base.jpg $4 
-compare ${tmp_dir}/${fbase}_1_sub_base.jpg ${tmp_dir}/${fbase}_2_sub_base.jpg $5 
+# Names ending in _1.pgm are 0 degrees and names ending in _2.pgm are 90 degress.
+$PIN_ALIGN_ROOT/pin_align_prep.sh $XZ ${tmp_dir}/${fbase}_1.pgm \
+${tmp_dir}/${fbase}_1_base.pgm ${tmp_dir}/${fbase}_1_sub_base.pgm> ${tmp_dir}/${fbase}_1.mvg 
+echo $PIN_ALIGN_ROOT
+$PIN_ALIGN_ROOT/pin_align_prep.sh $XY ${tmp_dir}/${fbase}_2.pgm \
+${tmp_dir}/${fbase}_2_base.pgm ${tmp_dir}/${fbase}_2_sub_base.pgm> ${tmp_dir}/${fbase}_2.mvg 
+compare ${tmp_dir}/${fbase}_1.pgm ${tmp_dir}/${fbase}_2.pgm $3 
+compare ${tmp_dir}/${fbase}_1_base.pgm ${tmp_dir}/${fbase}_2_base.pgm $4 
+compare ${tmp_dir}/${fbase}_1_sub_base.pgm ${tmp_dir}/${fbase}_2_sub_base.pgm $5 
 diff -bu ${tmp_dir}/${fbase}_1.mvg ${tmp_dir}/${fbase}_2.mvg > ${tmp_dir}/${3}.mvgdiff
-convert  ${tmp_dir}/${fbase}_1.jpg -trim info:- > ${tmp_dir}/info_image_1
-convert  ${tmp_dir}/${fbase}_2.jpg -trim info:- > ${tmp_dir}/info_image_2 
-convert $3 -trim info:- > ${tmp_dir}/info_image_compare_1_2
-convert $4 -trim info:- > ${tmp_dir}/info_image_compare_1_2_base
-convert $5 -trim info:- > ${tmp_dir}/info_image_compare_1_2_sub_base
 
+########### Original ##############
+#convert  ${tmp_dir}/${fbase}_1.pgm -trim info:- > ${tmp_dir}/info_image_1
+#convert  ${tmp_dir}/${fbase}_2.pgm -trim info:- > ${tmp_dir}/info_image_2 
+#convert $3 -trim info:- > ${tmp_dir}/info_image_compare_1_2
+#convert $4 -trim info:- > ${tmp_dir}/info_image_compare_1_2_base
+#convert $5 -trim info:- > ${tmp_dir}/info_image_compare_1_2_sub_base
 
-
+########## fuzz factor #############
+convert  ${tmp_dir}/${fbase}_1.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/info_image_1
+convert  ${tmp_dir}/${fbase}_2.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/info_image_2 
+convert $3 -fuzz $fuzz -trim info:- > ${tmp_dir}/info_image_compare_1_2
+convert $4 -fuzz $fuzz -trim info:- > ${tmp_dir}/info_image_compare_1_2_base
+convert $5 -fuzz $fuzz -trim info:- > ${tmp_dir}/info_image_compare_1_2_sub_base
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_1 > ${tmp_dir}/info_image_1.vars
 . ${tmp_dir}/info_image_1.vars
@@ -100,8 +112,8 @@ image_half_height_z=$(( $info_active_image_height / 2 ))
 image_pin_x1_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_pin_x1_offset_to_cent * 5 ))
-image_pin_x1_offset_to_cent=`echo "scale=2; $image_pin_x1_offset_to_cent / 100"| bc -l`
-x1_clip=$(( ${info_raw_image_width_offset} + 375 + 10 ))
+image_pin_x1_offset_to_cent=`echo "scale=2; -1* $image_pin_x1_offset_to_cent / 100"| bc -l`
+x1_clip=$(( ${info_raw_image_width_offset} + 375 ))
 #echo ${x1_clip}
 image_pin_z=$(( $info_raw_image_height_offset + $image_half_height_z ))
 image_pin_z_orig=$(( $image_pin_z + $roi_height_offset ))
@@ -110,12 +122,17 @@ image_pin_z_offset_to_cent=$(( $image_pin_z_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
     image_pin_z_offset_to_cent=`echo "scale=2; $image_pin_z_offset_to_cent / 100"|bc -l`
 else
-    image_pin_z_offset_to_cent=`echo "scale=2; - $image_pin_z_offset_to_cent / 100"|bc -l`
+    image_pin_z_offset_to_cent=`echo "scale=2; -1* $image_pin_z_offset_to_cent / 100"|bc -l`
 fi
-convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.jpg
-convert ${tmp_dir}/${fbase}_1_left.jpg -trim info:- > ${tmp_dir}/${fbase}_1_left.jpg.info  
+################### original #################
+#convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
+#convert ${tmp_dir}/${fbase}_1_left.pgm -trim info:- > ${tmp_dir}/${fbase}_1_left.pgm.info
 
-$PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/${fbase}_1_left.jpg.info > ${tmp_dir}/info_image_1_left.vars
+################### fuzz factor #################  
+convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
+convert ${tmp_dir}/${fbase}_1_left.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/${fbase}_1_left.pgm.info
+
+$PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/${fbase}_1_left.pgm.info > ${tmp_dir}/info_image_1_left.vars
 . ${tmp_dir}/info_image_1_left.vars
 #echo "${tmp_dir}/info_image_1_left.vars:"
 #cat ${tmp_dir}/info_image_1_left.vars
@@ -128,7 +145,7 @@ image_pin_z2_offset_to_cent=$(( $image_pin_z2_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
     image_pin_z2_offset_to_cent=`echo "scale=2; $image_pin_z2_offset_to_cent / 100"|bc -l`
 else
-    image_pin_z2_offset_to_cent=`echo "scale=2; -  $image_pin_z2_offset_to_cent / 100"|bc -l`
+    image_pin_z2_offset_to_cent=`echo "scale=2; -1*  $image_pin_z2_offset_to_cent / 100"|bc -l`
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_2 > ${tmp_dir}/info_image_2.vars
@@ -139,8 +156,8 @@ image_half_height_y=$(( $info_active_image_height / 2 ))
 image_pin_x2_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_pin_x2_offset_to_cent * 5 ))
-image_pin_x2_offset_to_cent=`echo "scale=2; $image_pin_x2_offset_to_cent / 100"| bc -l`
-x2_clip=$(( ${info_raw_image_width_offset} + 375 + 10 ))
+image_pin_x2_offset_to_cent=`echo "scale=2; -1* $image_pin_x2_offset_to_cent / 100"| bc -l`
+x2_clip=$(( ${info_raw_image_width_offset} + 375 ))
 #echo $x2_clip
 image_pin_y=$(( $info_raw_image_height_offset + $image_half_height_y ))
 image_pin_y_orig=$(( $image_pin_y + $roi_height_offset ))
@@ -151,11 +168,16 @@ if [ "xx${PIN_ALIGN_Y_UP}" != "xx" ]; then
 else
     image_pin_y_offset_to_cent=`echo "scale=2; - $image_pin_y_offset_to_cent / 100"|bc -l`
 fi
+################################ original #######################
+#convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
+#convert ${tmp_dir}/${fbase}_2_left.pgm  -trim info:- > ${tmp_dir}/${fbase}_2_left.pgm.info
 
-convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.jpg
-convert ${tmp_dir}/${fbase}_2_left.jpg -trim info:- > ${tmp_dir}/${fbase}_2_left.jpg.info
+########################### fuzz factor ########################
+convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
+convert ${tmp_dir}/${fbase}_2_left.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/${fbase}_2_left.pgm.info
 
-$PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/${fbase}_2_left.jpg.info > ${tmp_dir}/info_image_2_left.vars
+
+$PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/${fbase}_2_left.pgm.info > ${tmp_dir}/info_image_2_left.vars
 . ${tmp_dir}/info_image_2_left.vars
 #echo "${tmp_dir}/info_image_2_left.vars:"
 #cat ${tmp_dir}/info_image_2_left.vars
@@ -178,7 +200,7 @@ $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2 > ${tm
 image_pin_x_orig=$((  $info_raw_image_width_offset + $roi_width_offset  ))
 image_pin_x_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x_offset_to_cent=$(( $image_pin_x_offset_to_cent * 5 ))
-image_pin_x_offset_to_cent=`echo "scale=2; $image_pin_x_offset_to_cent / 100"| bc -l`
+image_pin_x_offset_to_cent=`echo "scale=2; -1* $image_pin_x_offset_to_cent / 100"| bc -l`
 
 nooutput=0
  
@@ -192,7 +214,7 @@ if [ "$info_raw_image_height_offset" == -1 ]; then
 fi
 
 if (( $(echo "$info_active_image_height > $tilt_limit" | bc -l) )); then
-   echo "TILTED; CANNOT CENTER"
+   echo "PIN TILTED; CANNOT CENTER"
    echo "info_active_image_height:${info_active_image_height} > tilt_limit:${tilt_limit}"
    nooutput=1
    exit
@@ -215,35 +237,40 @@ $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2_sub_ba
 . ${tmp_dir}/info_image_compare_1_2_sub_base.vars
 
 sub_base_center=$(( $info_active_image_height / 2 ))
-sub_base_center=$(( $info_raw_imaage_height_offset + $sub_base_center ))
+sub_base_center=$(( $info_raw_image_height_offset + $sub_base_center ))
 sub_base_center=$((  $roi_height_offset + $sub_base_center ))
 
+
 if (( $(echo "$pin_center > $sub_base_center" | bc -l) )); then
-   if (( $(echo "$pin_center - $sub_base_center > $base_tilt_limit" | bc -l) )); then
+   if (( $(echo "$pin_center - $sub_base_center > $sub_base_tilt_limit" | bc -l) )); then
        echo "BASE TILTED; CANNOT CENTER"
-       echo "pin_center:${pin_center} - sub_base_center:${sub_base_center}: .gt. base_tilt_limit:${base_tilt_limit}"
+       echo "pin_center:${pin_center} - sub_base_center:${sub_base_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}"
        nooutput=1
    fi
 else
-   if (( $(echo "$sub_base_center - $pin_center  > $base_tilt_limit" | bc -l) )); then
+   if (( $(echo "$sub_base_center - $pin_center  > $sub_base_tilt_limit" | bc -l) )); then
        echo "BASE TILTED; CANNOT CENTER"
-       echo "sub_base_center:${sub_base_center} - pin_center:${pin_center}: .gt. base_tilt_limit:${base_tilt_limit}"
+       echo "sub_base_center:${sub_base_center} - pin_center:${pin_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}"
        nooutput=1
    fi
 fi
 
 
 if [ "xx${nooutput}" == "xx0" ]; then
-    echo "X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x1_orig}, ${image_pin_y2_orig}, - ] 
-    echo "X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x2_orig}, - , ${image_pin_z2_orig} ]
-    #echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y_orig}, ${image_pin_z_orig} ] 
-    echo "X,Y,Z PIN POS PX"   [${image_pin_x_orig}, ${image_pin_y2_orig}, ${image_pin_z2_orig} ] 
+    if (( $(echo "${image_pin_x1_orig} < ${image_pin_x2_orig}" | bc -l)  )); then
+      image_pin_x_orig=${image_pin_x1_orig}
+      image_pin_x_offset_to_cent=${image_pin_x1_offset_to_cent}
+    else
+      image_pin_x_orig=${image_pin_x2_orig}
+      image_pin_x_offset_to_cent=${image_pin_x2_offset_to_cent}
+    fi
+    echo "OMEGA 0  X,-,Z PIN POS IMAGE2 PX"  [${image_pin_x1_orig}, - , ${image_pin_z2_orig} ]; # adding omega values
+    echo "OMEGA 90 X,Y,- PIN POS IMAGE1 PX"  [${image_pin_x2_orig}, ${image_pin_y2_orig}, - ];  # adding omega values
+    echo "OVERALL  X,Y,Z PIN POS        PX"  [${image_pin_x_orig}, ${image_pin_y2_orig}, ${image_pin_z2_orig} ]; # move to better align
 
-
-    echo "X,Y,- OFFSETS TO CENTER IMAGE1 mm"   [${image_pin_x1_offset_to_cent}, ${image_pin_y2_offset_to_cent}, - ] 
-    echo "X,-,Z OFFSETS TO CENTER IMAGE2 mm"   [${image_pin_x2_offset_to_cent}, - , ${image_pin_z2_offset_to_cent} ]
-    #echo "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y_offset_to_cent}, ${image_pin_z_offset_to_cent} ] 
-    echo  "X,Y,Z OFFSETS TO CENTER  mm"        [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ] 
+    echo "OMEGA 0  X,-,Z OFFSETS TO CENTER IMAGE2 mm"   [${image_pin_x1_offset_to_cent}, - , ${image_pin_z2_offset_to_cent} ]
+    echo "OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm"   [${image_pin_x2_offset_to_cent}, ${image_pin_y2_offset_to_cent}, - ]; # change order to be below XZ plane for better visual
+    echo "OVERALL X,Y,Z OFFSETS TO CENTER         mm"   [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ]; # move to better align
 
 
 #cat ${tmp_dir}/info*

@@ -8,23 +8,24 @@
 if [ "${1}xx" == "--help" ]; then
    echo "pin_align_prep.sh image_in image_out [base_image_out [sub_base_image_out]]"
    echo "        prepare a pin alignment image, image_in, for"
-   echo "        comparison between -1 and 90 degree images"
+   echo "        comparison between 0 and 90 degree images"
    echo "        writing the resulting image to image_out"
-   echo "        and optionally the 100 pixel strip in base_image_out"
-   echo "        and optionally the 100 pixel strip in sub_base_image_out"
+   echo "        and optionally the 50 pixel strip in base_image_out"
+   echo "        and optionally the 80 pixel strip in sub_base_image_out"
    echo "        assuming a 1280x1024 image and imgagemagick convert"
    echo "        in the PATH"
+   echo "	 $2 pin tip, $3 is base, $4 is sub_base"
    exit
 fi
-tmp_dir=/tmp/${USER}_pin_align_$$
+tmp_dir=$PWD/${USER}_pin_align_$$
 mkdir $tmp_dir
 convert $1 -contrast  -contrast ${tmp_dir}/$1
-convert ${tmp_dir}/$1 -crop 325x400+375+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
+# Windows     width x height (px) + horizontal offset + vertical offset from top left corner
+convert ${tmp_dir}/$1 -crop 325x400+375+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
 if [ "${3}xx" != "xx" ]; then
-  convert ${tmp_dir}/$1 -crop 100x400+650+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $3
+  convert ${tmp_dir}/$1 -crop 50x400+650+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $3
   if [ "${4}xx" != "xx" ]; then
-    convert ${tmp_dir}/$1 -crop 100x400+750+312 -canny 2x1 -negate -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $4
+    convert ${tmp_dir}/$1 -crop 80x400+780+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $4
   fi
 fi
-convert $2 -hough-lines 20x20+180 MVG:"-"
 

@@ -2,8 +2,11 @@
 Scripts for detecting pin alignment issues from top view camera
 
 Designed by Edwin Lazo, Jean Jakoncic, Herbert J. Bernstein
-Copyright 29 Jun 2019, Herbert J. Bernstein
+Copyright 29 Jan 2019, Herbert J. Bernstein
 as a copyleft for the GPL and LGPL
+Revised 14 Feb 2019, Herbert J. Bernstein, Edwin Lazo
+  improve base tilt detection
+  use pgm instead of jpg
 
  YOU MAY REDISTRIBUTE THE PIN_ALIGN PACKAGE UNDER THE TERMS OF THE GPL
                      
@@ -69,9 +72,12 @@ perfectly straight and centered, the two images should superimpose.
       and populate a list of variable descibing the image geometry
 
 all_pin.sh
-        Takes no arguments.  Defines PIN_ALIGN_ROOT as the directory from
-        which is has been run and then runs pin_align.sh on the sample images
-        in the kit.
+        If not in production environment takes no arguments.  Defines 
+        PIN_ALIGN_ROOT as the directory from  which is has been run 
+        and then runs pin_align.sh on the sample images in the kit.
+
+        If in production enviroment, takes two arguments, the 0 and
+        90 degree jpeg images
      
 
 pin_align.sh image_0 image_90 image_out image_base_out image_sub_base_out [tilt_limit]
