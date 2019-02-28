@@ -1,12 +1,12 @@
 #!/bin/sh
 if [ -e "/usr/local/bin/topViewCam" ]; then
   export PIN_ALIGN_ROOT=/usr/local/bin/topViewCam
-  echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
+  # echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
   $PIN_ALIGN_ROOT/pin_align.sh $1 $2 omega_0_90.pgm omega_0_90_base.pgm omega_0_90_sub_base.pgm 50
 else
   full_path="$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"
   export PIN_ALIGN_ROOT=`dirname "$full_path"`
-  echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
+  # echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
 
   $PIN_ALIGN_ROOT/pin_align.sh mitegenPins_omega_0_centered_001.jpg mitegenPins_omega_90_centered_001.jpg mitegenPins_omega_0_90_centered_001.pgm \
   mitegenPins_omega_0_90_centered_001_base.pgm mitegenPins_omega_0_90_centered_001_sub_base.pgm 50

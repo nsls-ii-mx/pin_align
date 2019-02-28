@@ -8,14 +8,16 @@ full_path="$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"
 if [ -d /usr/local/bin/topViewCam ]; then
    export PIN_ALIGN_ROOT=/usr/local/bin/topViewCam
 fi
-#echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
-
-#echo 0 $0 
-#echo 1 $1 
-#echo 2 $2 
-#echo 3 $3 
-#echo 4 $4 
-#echo 5 $5 
+. $PIN_ALIGN_ROOT/pin_align_config.sh
+if [ "xx${PIN_ALIGN_DEBUG}" != "xx" ]; then
+  echo PIN_ALIGN_ROOT=\"$PIN_ALIGN_ROOT\"
+  echo "argument 0: ${0}" 1>&2 
+  echo "argument 1: ${1}" 1>&2 
+  echo "argument 2: ${2}" 1>&2 
+  echo "argument 3: ${3}" 1>&2 
+  echo "argument 4: ${4}" 1>&2 
+  echo "argument 5: ${5}" 1>&2
+fi 
 
 if [ "${1}xx" == "--helpxx" ]; then
    echo "pin_align.sh image_0 image_90 image_out image_base_out image_sub_base_out [tilt_limit]" 
@@ -42,15 +44,15 @@ fuzz="9% -threshold 50%"
 fname=$1
 fname=${fname##*/}
 fbase=${fname%%.*} 
- 
-roi_width=$(( 325 ))
-roi_height=$(( 400 ))
-roi_width_offset=$(( 375 ))
-roi_height_offset=$(( 312 ))
-image_center_width=$(( 515 - $roi_width_offset ))
-image_center_height=$(( 460 - $roi_height_offset ))
+
+roi_width=$(( $PIN_ALIGN_ROI_WIDTH ))
+roi_height=$(( $PIN_ALIGN_ROI_HEIGHT ))
+roi_width_offset=$(( $PIN_ALIGN_ROI_WIDTH_OFFSET ))
+roi_height_offset=$(( $PIN_ALIGN_ROI_HEIGHT_OFFSET ))
+image_center_width=$(( $PIN_ALIGN_IMAGE_WIDTH_CENTER - $roi_width_offset ))
+image_center_height=$(( $PIN_ALIGN_IMAGE_HEIGHT_CENTER - $roi_height_offset ))
 if [ "${6}xx" == "xx" ]; then
-  tilt_limit=50
+  tilt_limit=$PIN_ALIGN_TILT_LIMIT
 else
   tilt_limit=$6
 fi
@@ -206,18 +208,21 @@ nooutput=0
  
 if [ "$info_raw_image_width_offset" == -1 ]; then
    echo "NO PIN FOUND"
-   exit
+   nooutput=1
 fi
 if [ "$info_raw_image_height_offset" == -1 ]; then
    echo "NO PIN FOUND"
-   exit
+   nooutput=1
 fi
 
 if (( $(echo "$info_active_image_height > $tilt_limit" | bc -l) )); then
    echo "PIN TILTED; CANNOT CENTER"
-   echo "info_active_image_height:${info_active_image_height} > tilt_limit:${tilt_limit}"
-   nooutput=1
-   exit
+   if [ "xx$PIN_ALIGN_DEBUG" == "xx" ]; then 
+     nooutput=1
+     exit
+   else
+     echo "info_active_image_height:${info_active_image_height} > tilt_limit:${tilt_limit}" 1>&2
+   fi
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2_base > ${tmp_dir}/info_image_compare_1_2_base.vars
@@ -229,8 +234,11 @@ pin_center=$((  $roi_height_offset + $pin_center ))
 
 if (( $(echo "$info_active_image_height > $base_tilt_limit" | bc -l) )); then
    echo "BASE TILTED; CANNOT CENTER"
-   echo "info_active_image_height:${info_active_image_height} .gt. base_tilt_limit:${base_tilt_limit}"
-   nooutput=1
+   if [ "xx$PIN_ALIGN_DEBUG" == "xx" ]; then
+     nooutput=1
+   else   
+     echo "info_active_image_height:${info_active_image_height} .gt. base_tilt_limit:${base_tilt_limit}" 1>&2
+   fi
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2_sub_base > ${tmp_dir}/info_image_compare_1_2_sub_base.vars
@@ -244,14 +252,20 @@ sub_base_center=$((  $roi_height_offset + $sub_base_center ))
 if (( $(echo "$pin_center > $sub_base_center" | bc -l) )); then
    if (( $(echo "$pin_center - $sub_base_center > $sub_base_tilt_limit" | bc -l) )); then
        echo "BASE TILTED; CANNOT CENTER"
-       echo "pin_center:${pin_center} - sub_base_center:${sub_base_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}"
-       nooutput=1
-   fi
+       if [ "xx$PIN_ALIGN_DEBUG" == "xx" ]; then
+         nooutput=1
+       else
+         echo "pin_center:${pin_center} - sub_base_center:${sub_base_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}" 1>&2
+       fi
+    fi
 else
    if (( $(echo "$sub_base_center - $pin_center  > $sub_base_tilt_limit" | bc -l) )); then
        echo "BASE TILTED; CANNOT CENTER"
-       echo "sub_base_center:${sub_base_center} - pin_center:${pin_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}"
-       nooutput=1
+       if [ "xx$PIN_ALIGN_DEBUG" == "xx" ]; then
+         nooutput=1
+       else
+         echo "sub_base_center:${sub_base_center} - pin_center:${pin_center}: .gt. sub_base_tilt_limit:${sub_base_tilt_limit}" 1>&2
+       fi
    fi
 fi
 
@@ -272,8 +286,8 @@ if [ "xx${nooutput}" == "xx0" ]; then
     echo "OMEGA 90 X,Y,- OFFSETS TO CENTER IMAGE1 mm"   [${image_pin_x2_offset_to_cent}, ${image_pin_y2_offset_to_cent}, - ]; # change order to be below XZ plane for better visual
     echo "OVERALL X,Y,Z OFFSETS TO CENTER         mm"   [${image_pin_x_offset_to_cent}, ${image_pin_y2_offset_to_cent}, ${image_pin_z2_offset_to_cent} ]; # move to better align
 
-
-#cat ${tmp_dir}/info*
-
 fi
+    if [ "xx$PIN_ALIGN_DEBUG" == "xx" ]; then
+      rm -rf ${tmp_dir}
+    fi
 
