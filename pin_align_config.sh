@@ -31,7 +31,7 @@ fi
 # The following line gives the default value
 
 #  ***  EDIT THE FOLLOWING LINE TO CHANGE THE TILT LIMIT ***
-PIN_ALIGN_DEFAULT_TILT_LIMIT="50"
+PIN_ALIGN_DEFAULT_TILT_LIMIT="25"
 ############################################################
  
 #  export PIN_ALIGN_TILT_LIMIT=$PIN_ALIGN_DEFAULT_TILT_LIMIT
@@ -59,8 +59,12 @@ PIN_ALIGN_DEFAULT_ROI_WIDTH=$(( 325 ))
 PIN_ALIGN_DEFAULT_ROI_HEIGHT=$(( 400 ))
 PIN_ALIGN_DEFAULT_ROI_WIDTH_OFFSET=$(( 375 ))
 PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET=$(( 312 ))
-PIN_ALIGN_DEFAULT_IMAGE_WIDTH_CENTER=$(( 515 ))
-PIN_ALIGN_DEFAULT_IMAGE_HEIGHT_CENTER=$((460 ))
+PIN_ALIGN_DEFAULT_IMAGE_WIDTH_CENTER=$(( 510 ))
+PIN_ALIGN_DEFAULT_IMAGE_HEIGHT_CENTER=$((445 ))
+#	width x height + horizontal offset + vertical offset (offsets origin is top left corner) Note: vertical offset must be the same for all.
+PIN_ALIGN_PIN_TIP_WINDOW="266x400+375+295"
+PIN_ALIGN_BASE_WINDOW="50x400+650+295"
+PIN_ALIGN_SUB_BASE_WINDOW="80x400+765+295"
 ############################################################
 
 
@@ -109,7 +113,7 @@ fi
 #
 
 #  *** UNCOMMENT THE FOLLOWING LINE TO SET PIN_ALIGN_Y_UP ***
-# export PIN_ALIGN_Y_UP=1;   #Y motor axis is up"
+ export PIN_ALIGN_Y_UP=1;   #Y motor axis is up"
 ############################################################
 
 if [ "xx${PIN_ALIGN_DEBUG}" != "xx" ]; then

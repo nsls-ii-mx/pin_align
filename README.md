@@ -7,6 +7,8 @@ as a copyleft for the GPL and LGPL
 Revised 14 Feb 2019, Herbert J. Bernstein, Edwin Lazo
   improve base tilt detection
   use pgm instead of jpg
+Revised 12 Mar 2019, Edwin Lazo, Herbert J. Bernstein
+  Extended configuration after camera realignment
 
  YOU MAY REDISTRIBUTE THE PIN_ALIGN PACKAGE UNDER THE TERMS OF THE GPL
                      
@@ -63,6 +65,8 @@ perfectly straight and centered, the two images should superimpose.
   The scripts are
 
 
+  pin_align_config.sh -- configurable pin_align settings to be
+      incoroprated in the pin_align scripts
   all_pin.sh -- a top level example of a script using pin_align.sh
   pin_align.sh -- the main service script for the run
   pin_align_prep.sh -- a script to convert a single image into enchanced
@@ -70,6 +74,42 @@ perfectly straight and centered, the two images should superimpose.
       the base of the pin, and the cap below the pin.
   pin_align_split_info.sh -- a script to make the imagemagick image info
       and populate a list of variable descibing the image geometry
+
+pin_align.sh
+        See the text of the file for details.  The important settings
+        are:
+
+        #  *** UNCOMMENT THE FOLLOWING LINE TO ENABLE DEBUG MODE ***
+        #  export PIN_ALIGN_DEBUG="yes"
+
+        #  ***  EDIT THE FOLLOWING LINE TO CHANGE THE TILT LIMIT ***
+        PIN_ALIGN_DEFAULT_TILT_LIMIT="25"
+
+        # PIN_ALIGN_ROI_WIDTH, PIN_ALIGN_ROI_HEIGHT, in pixels, and
+        # PIN_ALIGN_ROI_WIDTH_OFFSET and PIN_ALIGN_ROI_HEIGHT__OFFSET
+        # define the region of interest within which the analysis of
+        # pin alignment is done.  The full image within which the roi
+        # is defined is implicitly assumed to be 1280x1024, but those
+        # values are not explicitly used, but the centers 
+        # PIN_ALIGN_IMAGE_WIDTH_CENTER and PIN_ALIGN_IMAGE_HEIGHT_CENTER
+        # of the original image in pixels are given
+
+        # The following six lines give the default values
+        # *** EDIT THESE LINES TO CHANGE THESE PARAMETERS
+        PIN_ALIGN_DEFAULT_ROI_WIDTH=$(( 325 ))
+        PIN_ALIGN_DEFAULT_ROI_HEIGHT=$(( 400 ))
+        PIN_ALIGN_DEFAULT_ROI_WIDTH_OFFSET=$(( 375 ))
+        PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET=$(( 312 ))
+        PIN_ALIGN_DEFAULT_IMAGE_WIDTH_CENTER=$(( 510 ))
+        PIN_ALIGN_DEFAULT_IMAGE_HEIGHT_CENTER=$((445 ))
+        #                         width x height
+        #                                 + horizontal offset 
+        #                                   + vertical offset 
+        #          (offsets origin is top left corner) 
+        #          Note: vertical offset must be the same for all.  
+        PIN_ALIGN_PIN_TIP_WINDOW="266x400+375+295"
+        PIN_ALIGN_BASE_WINDOW="50x400+650+295"
+        PIN_ALIGN_SUB_BASE_WINDOW="80x400+765+295"
 
 all_pin.sh
         If not in production environment takes no arguments.  Defines 

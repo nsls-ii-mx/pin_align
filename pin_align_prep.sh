@@ -17,15 +17,16 @@ if [ "${1}xx" == "--help" ]; then
    echo "	 $2 pin tip, $3 is base, $4 is sub_base"
    exit
 fi
+. $PIN_ALIGN_ROOT/pin_align_config.sh
 tmp_dir=$PWD/${USER}_pin_align_$$
 mkdir $tmp_dir
 convert $1 -contrast  -contrast ${tmp_dir}/$1
 # Windows     width x height (px) + horizontal offset + vertical offset from top left corner
-convert ${tmp_dir}/$1 -crop 325x400+375+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
+convert ${tmp_dir}/$1 -crop $PIN_ALIGN_PIN_TIP_WINDOW -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $2
 if [ "${3}xx" != "xx" ]; then
-  convert ${tmp_dir}/$1 -crop 50x400+650+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $3
+  convert ${tmp_dir}/$1 -crop $PIN_ALIGN_BASE_WINDOW -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $3
   if [ "${4}xx" != "xx" ]; then
-    convert ${tmp_dir}/$1 -crop 80x400+780+312 -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $4
+    convert ${tmp_dir}/$1 -crop $PIN_ALIGN_SUB_BASE_WINDOW -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 $4
   fi
 fi
 
