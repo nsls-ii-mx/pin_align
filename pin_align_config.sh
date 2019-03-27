@@ -15,11 +15,20 @@
 #  
 
 
+#  *** EDIT THE FOLLOWING LINE TO CHANGE PIXELS/MM       ***
+PIN_ALIGN_DEFAULT_PIXELS_PER_MM="20"
+############################################################
+
+if [ "xx${PIN_ALIGN_PIXELS_PER_MM}" == "xx" ]; then
+   PIN_ALIGN_PIXELS_PER_MM=${PIN_ALIGN_DEFAULT_PIXELS_PER_MM}
+fi
+echo "PIN_ALIGN_PIXELS_PER_MM = ${PIN_ALIGN_PIXELS_PER_MM}"
+
+
+
 #  *** UNCOMMENT THE FOLLOWING LINE TO ENABLE DEBUG MODE ***
 #  export PIN_ALIGN_DEBUG="yes"
 ############################################################
-
-
 
 if [ "xx${PIN_ALIGN_DEBUG}" != "xx" ]; then
    echo "PIN_ALIGN: DEBUG enabled" 1>&2

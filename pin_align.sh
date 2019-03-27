@@ -56,6 +56,7 @@ if [ "${6}xx" == "xx" ]; then
 else
   tilt_limit=$6
 fi
+scaled_px_per_mm=`echo "scale=2;  5 * ${PIN_ALIGN_PIXELS_PER_MM} "| bc -l`
 base_tilt_limit=$(( $tilt_limit * 4  ))
 base_tilt_limit=$(( $base_tilt_limit / 3  ))
 sub_base_tilt_limit=$(( $tilt_limit / 3 ))
@@ -114,7 +115,7 @@ image_half_height_z=$(( $info_active_image_height / 2 ))
 image_pin_x1_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_pin_x1_offset_to_cent * 5 ))
-image_pin_x1_offset_to_cent=`echo "scale=2; -1* $image_pin_x1_offset_to_cent / 100"| bc -l`
+image_pin_x1_offset_to_cent=`echo "scale=2; -1* $image_pin_x1_offset_to_cent / ${scaled_px_per_mm}"| bc -l`
 x1_clip=$(( ${info_raw_image_width_offset} + 375 ))
 #echo ${x1_clip}
 image_pin_z=$(( $info_raw_image_height_offset + $image_half_height_z ))
@@ -122,9 +123,9 @@ image_pin_z_orig=$(( $image_pin_z + $roi_height_offset ))
 image_pin_z_offset_to_cent=$(( $image_center_height - $image_pin_z  ))
 image_pin_z_offset_to_cent=$(( $image_pin_z_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
-    image_pin_z_offset_to_cent=`echo "scale=2; $image_pin_z_offset_to_cent / 100"|bc -l`
+    image_pin_z_offset_to_cent=`echo "scale=2; $image_pin_z_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 else
-    image_pin_z_offset_to_cent=`echo "scale=2; -1* $image_pin_z_offset_to_cent / 100"|bc -l`
+    image_pin_z_offset_to_cent=`echo "scale=2; -1* $image_pin_z_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 ################### original #################
 #convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
@@ -145,9 +146,9 @@ image_pin_z2_orig=$(( $image_pin_z2 + $roi_height_offset ))
 image_pin_z2_offset_to_cent=$(( $image_center_height - $image_pin_z2  ))
 image_pin_z2_offset_to_cent=$(( $image_pin_z2_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Z_UP}" != "xx" ]; then  
-    image_pin_z2_offset_to_cent=`echo "scale=2; $image_pin_z2_offset_to_cent / 100"|bc -l`
+    image_pin_z2_offset_to_cent=`echo "scale=2; $image_pin_z2_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 else
-    image_pin_z2_offset_to_cent=`echo "scale=2; -1*  $image_pin_z2_offset_to_cent / 100"|bc -l`
+    image_pin_z2_offset_to_cent=`echo "scale=2; -1*  $image_pin_z2_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_2 > ${tmp_dir}/info_image_2.vars
@@ -158,7 +159,7 @@ image_half_height_y=$(( $info_active_image_height / 2 ))
 image_pin_x2_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_pin_x2_offset_to_cent * 5 ))
-image_pin_x2_offset_to_cent=`echo "scale=2; -1* $image_pin_x2_offset_to_cent / 100"| bc -l`
+image_pin_x2_offset_to_cent=`echo "scale=2; -1* $image_pin_x2_offset_to_cent / ${scaled_px_per_mm}"| bc -l`
 x2_clip=$(( ${info_raw_image_width_offset} + 375 ))
 #echo $x2_clip
 image_pin_y=$(( $info_raw_image_height_offset + $image_half_height_y ))
@@ -166,9 +167,9 @@ image_pin_y_orig=$(( $image_pin_y + $roi_height_offset ))
 image_pin_y_offset_to_cent=$(( $image_center_height - $image_pin_y  ))
 image_pin_y_offset_to_cent=$(( $image_pin_y_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Y_UP}" != "xx" ]; then  
-    image_pin_y_offset_to_cent=`echo "scale=2; $image_pin_y_offset_to_cent / 100"|bc -l`
+    image_pin_y_offset_to_cent=`echo "scale=2; $image_pin_y_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 else
-    image_pin_y_offset_to_cent=`echo "scale=2; - $image_pin_y_offset_to_cent / 100"|bc -l`
+    image_pin_y_offset_to_cent=`echo "scale=2; - $image_pin_y_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 ################################ original #######################
 #convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
@@ -190,9 +191,9 @@ image_pin_y2_orig=$(( $image_pin_y2 + $roi_height_offset ))
 image_pin_y2_offset_to_cent=$(( $image_center_height - $image_pin_y2  ))
 image_pin_y2_offset_to_cent=$(( $image_pin_y2_offset_to_cent * 5 ))
 if [ "xx${PIN_ALIGN_Y_UP}" != "xx" ]; then  
-    image_pin_y2_offset_to_cent=`echo "scale=2; $image_pin_y2_offset_to_cent / 100"|bc -l`
+    image_pin_y2_offset_to_cent=`echo "scale=2; $image_pin_y2_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 else
-    image_pin_y2_offset_to_cent=`echo "scale=2; - $image_pin_y2_offset_to_cent / 100"|bc -l`
+    image_pin_y2_offset_to_cent=`echo "scale=2; - $image_pin_y2_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2 > ${tmp_dir}/info_image_compare_1_2.vars
@@ -202,7 +203,7 @@ $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/info_image_compare_1_2 > ${tm
 image_pin_x_orig=$((  $info_raw_image_width_offset + $roi_width_offset  ))
 image_pin_x_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x_offset_to_cent=$(( $image_pin_x_offset_to_cent * 5 ))
-image_pin_x_offset_to_cent=`echo "scale=2; -1* $image_pin_x_offset_to_cent / 100"| bc -l`
+image_pin_x_offset_to_cent=`echo "scale=2; -1* $image_pin_x_offset_to_cent / ${scaled_px_per_mm}"| bc -l`
 
 nooutput=0
  
