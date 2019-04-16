@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 #
 #  pin_align.sh -- ccmparison 0 and 90 degree images
 #                       H. J. Bernstein, 3 Jan 2019
@@ -29,7 +29,7 @@ if [ "${1}xx" == "--helpxx" ]; then
    echo "        imagemagick convert called as convert"
    echo "        imagemagick compare called as conpare"
    echo "        assuming a center at 515 460"
-   echo "        assuming 325x400+375+312 ROI"
+   echo "        assuming 325x400+${PIN_ALIGN_DEFAULT_ROI_WIDTH_OFFSET}+${PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET} ROI"
    echo "        and $PIN_ALIGN_ROOT containing pin_align_prep.sh, etc"
    echo "        tilt_limit is a limit on the image height in pixels"
    echo "        default 50 "
@@ -116,7 +116,7 @@ image_pin_x1_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x1_offset_to_cent=$(( $image_pin_x1_offset_to_cent * 5 ))
 image_pin_x1_offset_to_cent=`echo "scale=2; -1* $image_pin_x1_offset_to_cent / ${scaled_px_per_mm}"| bc -l`
-x1_clip=$(( ${info_raw_image_width_offset} + 375 ))
+x1_clip=$(( ${info_raw_image_width_offset} + ${PIN_ALIGN_DEFAULT_ROI_WIDTH_OFFSET} ))
 #echo ${x1_clip}
 image_pin_z=$(( $info_raw_image_height_offset + $image_half_height_z ))
 image_pin_z_orig=$(( $image_pin_z + $roi_height_offset ))
@@ -128,11 +128,11 @@ else
     image_pin_z_offset_to_cent=`echo "scale=2; -1* $image_pin_z_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 ################### original #################
-#convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
+#convert $1 -crop "10x400+${x1_clip}+${PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET}" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
 #convert ${tmp_dir}/${fbase}_1_left.pgm -trim info:- > ${tmp_dir}/${fbase}_1_left.pgm.info
 
 ################### fuzz factor #################  
-convert $1 -crop "10x400+${x1_clip}+312" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
+convert $1 -crop "10x400+${x1_clip}+${PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET}" -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_1_left.pgm
 convert ${tmp_dir}/${fbase}_1_left.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/${fbase}_1_left.pgm.info
 
 $PIN_ALIGN_ROOT/pin_align_split_info.sh ${tmp_dir}/${fbase}_1_left.pgm.info > ${tmp_dir}/info_image_1_left.vars
@@ -160,7 +160,7 @@ image_pin_x2_orig=$(( $info_raw_image_width_offset + $roi_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_center_width - $info_raw_image_width_offset ))
 image_pin_x2_offset_to_cent=$(( $image_pin_x2_offset_to_cent * 5 ))
 image_pin_x2_offset_to_cent=`echo "scale=2; -1* $image_pin_x2_offset_to_cent / ${scaled_px_per_mm}"| bc -l`
-x2_clip=$(( ${info_raw_image_width_offset} + 375 ))
+x2_clip=$(( ${info_raw_image_width_offset} + ${PIN_ALIGN_DEFAULT_ROI_WIDTH_OFFSET} ))
 #echo $x2_clip
 image_pin_y=$(( $info_raw_image_height_offset + $image_half_height_y ))
 image_pin_y_orig=$(( $image_pin_y + $roi_height_offset ))
@@ -172,11 +172,11 @@ else
     image_pin_y_offset_to_cent=`echo "scale=2; - $image_pin_y_offset_to_cent / ${scaled_px_per_mm}"|bc -l`
 fi
 ################################ original #######################
-#convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
+#convert $2 -crop "10x400+${x2_clip}+${PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET}"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
 #convert ${tmp_dir}/${fbase}_2_left.pgm  -trim info:- > ${tmp_dir}/${fbase}_2_left.pgm.info
 
 ########################### fuzz factor ########################
-convert $2 -crop "10x400+${x2_clip}+312"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
+convert $2 -crop "10x400+${x2_clip}+${PIN_ALIGN_DEFAULT_ROI_HEIGHT_OFFSET}"  -contrast -contrast -canny 2x1 -negate -colorspace Gray -morphology Erode Octagon:1 -morphology Dilate Octagon:1 ${tmp_dir}/${fbase}_2_left.pgm
 convert ${tmp_dir}/${fbase}_2_left.pgm -fuzz $fuzz -trim info:- > ${tmp_dir}/${fbase}_2_left.pgm.info
 
 
